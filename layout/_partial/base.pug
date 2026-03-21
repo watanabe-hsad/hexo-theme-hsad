@@ -15,6 +15,9 @@ html(lang=config.language || 'zh-CN')
     link(rel='stylesheet' href=url_for('/css/hsad-theme.css'))
     script(src=url_for('/js/hsad-theme.js') defer)
   body(class=[is_home() ? 'view-home' : 'view-inner', is_post() ? 'view-post' : 'view-page'].join(' '))
+    if is_post()
+      .reading-progress(aria-hidden='true')
+        span.reading-progress__bar(data-reading-progress)
     .page-aura.page-aura--one
     .page-aura.page-aura--two
     .site-shell
