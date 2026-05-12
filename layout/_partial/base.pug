@@ -1,6 +1,11 @@
 - var siteTitle = theme.brand_name || config.title || 'Blog'
 - var currentTitle = page.title ? `${page.title} | ${siteTitle}` : siteTitle
 - var currentDescription = page.description || config.description || config.subtitle || siteTitle
+- var licenseName = (theme.footer && theme.footer.license_name) || theme.license_name
+- var licenseUrl = (theme.footer && theme.footer.license_url) || theme.license_url
+- var accentColor = theme.accent_color
+- var accentSoft = theme.accent_soft
+- var accentStrong = accentColor ? `color-mix(in srgb, ${accentColor} 62%, #223142)` : ''
 doctype html
 html(lang=config.language || 'zh-CN')
   head
@@ -12,6 +17,13 @@ html(lang=config.language || 'zh-CN')
     meta(name='author' content=config.author || siteTitle)
     != meta_generator()
     title= currentTitle
+    if accentColor || accentSoft
+      style.
+        :root {
+          #{accentColor ? `--accent: ${accentColor};` : ''}
+          #{accentStrong ? `--accent-strong: ${accentStrong};` : ''}
+          #{accentSoft ? `--accent-soft: ${accentSoft};` : ''}
+        }
     link(rel='stylesheet' href=url_for('/css/hsad-theme.css'))
     script(src=url_for('/js/hsad-theme.js') defer)
   body(class=[is_home() ? 'view-home' : 'view-inner', is_post() ? 'view-post' : 'view-page'].join(' '))
@@ -52,8 +64,8 @@ html(lang=config.language || 'zh-CN')
               strong= theme.footer.support.title
               if theme.footer.support.suffix
                 span= ` ${theme.footer.support.suffix}`
-        if theme.footer && theme.footer.license_name && theme.footer.license_url
+        if licenseName && licenseUrl
           p.site-footer__license
             | 本站内容采用
-            a(href=theme.footer.license_url target='_blank' rel='noopener')= ` ${theme.footer.license_name} `
+            a(href=licenseUrl target='_blank' rel='noopener')= ` ${licenseName} `
             | 协议发布

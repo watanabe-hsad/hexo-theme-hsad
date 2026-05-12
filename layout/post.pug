@@ -11,7 +11,8 @@ block content
   -   else if (page.tags.data) tagList = page.tags.data
   - var headingMatches = page.content ? page.content.match(/<h[2-4]\b/gi) : null
   - var hasToc = headingMatches && headingMatches.length
-  - var tocHtml = hasToc ? toc(page.content, { min_depth: 2, max_depth: 3, list_number: false, class: 'post-toc__list' }) : ''
+  - var mobileTocHtml = hasToc ? toc(page.content, { min_depth: 2, max_depth: 3, list_number: false, class: 'post-toc__list' }) : ''
+  - var desktopTocHtml = hasToc ? toc(page.content, { min_depth: 2, max_depth: 2, list_number: false, class: 'post-toc__list' }) : ''
   .article-layout(class=hasToc ? 'article-layout--with-toc' : 'article-layout--plain')
     article.article
       header.article__header
@@ -31,14 +32,21 @@ block content
           .article__tags
             each tag in tagList
               a.article__tag(href=url_for(tag.path))= tag.name
+      if hasToc
+        details.post-outline.post-outline--mobile
+          summary.post-outline__summary
+            span 本文导航
+            small 按标题快速定位
+          nav.post-toc(data-post-toc)
+            != mobileTocHtml
       .article__content
         != page.content
     if hasToc
-      aside.post-outline(aria-label='文章目录')
+      aside.post-outline.post-outline--desktop(aria-label='文章目录')
         p.post-outline__eyebrow 本文导航
-        p.post-outline__title 按标题快速定位
+        p.post-outline__title 章节概览
         nav.post-toc(data-post-toc)
-          != tocHtml
+          != desktopTocHtml
   if page.prev || page.next
     nav.post-nav
       if page.prev
