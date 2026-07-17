@@ -25,8 +25,8 @@ html(lang=config.language || 'zh-CN')
           #{accentStrong ? `--accent-strong: ${accentStrong};` : ''}
           #{accentSoft ? `--accent-soft: ${accentSoft};` : ''}
         }
-    link(rel='stylesheet' href=url_for('/css/hsad-theme.css'))
-    script(src=url_for('/js/hsad-theme.js') defer)
+    link(rel='stylesheet' href=hsad_theme_asset('/css/hsad-theme.css'))
+    script(src=hsad_theme_asset('/js/hsad-theme.js') defer)
   body(class=[is_home() ? 'view-home' : 'view-inner', is_post() ? 'view-post' : 'view-page'].join(' '))
     if is_post()
       .reading-progress(aria-hidden='true')

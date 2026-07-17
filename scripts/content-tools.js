@@ -1,6 +1,38 @@
 'use strict';
 
+const crypto = require('crypto');
+const fs = require('fs');
 const path = require('path');
+
+const themeAssetVersions = new Map();
+
+const getThemeAssetUrl = function (assetPath) {
+  const normalizedPath = String(assetPath || '').replace(/^\/+/, '');
+  const publicUrl = this.url_for(`/${normalizedPath}`);
+  const filePath = path.join(hexo.theme_dir, 'source', normalizedPath);
+
+  try {
+    const stat = fs.statSync(filePath);
+    const signature = `${stat.size}:${stat.mtimeMs}`;
+    let cached = themeAssetVersions.get(filePath);
+
+    if (!cached || cached.signature !== signature) {
+      cached = {
+        signature,
+        version: crypto.createHash('sha256')
+          .update(fs.readFileSync(filePath))
+          .digest('hex')
+          .slice(0, 12)
+      };
+      themeAssetVersions.set(filePath, cached);
+    }
+
+    const separator = publicUrl.includes('?') ? '&' : '?';
+    return `${publicUrl}${separator}v=${cached.version}`;
+  } catch (error) {
+    return publicUrl;
+  }
+};
 
 const isHidden = (post) => {
   if (!post) return false;
@@ -153,6 +185,7 @@ hexo.extend.helper.register('hsad_summary', getSummary);
 hexo.extend.helper.register('hsad_leaf_category', getLeafCategory);
 hexo.extend.helper.register('hsad_category_trail', getCategoryTrail);
 hexo.extend.helper.register('hsad_visible_count', getVisibleCount);
+hexo.extend.helper.register('hsad_theme_asset', getThemeAssetUrl);
 
 // Keep the search generator, but use the theme's template so `hide: true`
 // posts never enter the public index. Direct post routes remain available.
