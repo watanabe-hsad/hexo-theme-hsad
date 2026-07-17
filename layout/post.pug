@@ -9,10 +9,13 @@ block content
   - if (page.tags)
   -   if (typeof page.tags.toArray === 'function') tagList = page.tags.toArray()
   -   else if (page.tags.data) tagList = page.tags.data
-  - var headingMatches = page.content ? page.content.match(/<h[2-4]\b/gi) : null
-  - var hasToc = headingMatches && headingMatches.length
-  - var mobileTocHtml = hasToc ? toc(page.content, { min_depth: 2, max_depth: 3, list_number: false, class: 'post-toc__list' }) : ''
-  - var desktopTocHtml = hasToc ? toc(page.content, { min_depth: 2, max_depth: 2, list_number: false, class: 'post-toc__list' }) : ''
+  - var headingMatches = page.content ? (page.content.match(/<h([2-4])\b/gi) || []) : []
+  - var headingDepths = headingMatches.map(function(heading) { return Number(heading.match(/\d/)[0]); })
+  - var primaryHeadingDepth = headingDepths.indexOf(2) !== -1 ? 2 : (headingDepths.indexOf(3) !== -1 ? 3 : 4)
+  - var mobileMaxDepth = primaryHeadingDepth === 2 ? 3 : (primaryHeadingDepth === 3 ? 4 : 4)
+  - var mobileTocHtml = headingDepths.length ? toc(page.content, { min_depth: primaryHeadingDepth, max_depth: mobileMaxDepth, list_number: false, class: 'post-toc__list' }) : ''
+  - var desktopTocHtml = headingDepths.length ? toc(page.content, { min_depth: primaryHeadingDepth, max_depth: primaryHeadingDepth, list_number: false, class: 'post-toc__list' }) : ''
+  - var hasToc = Boolean(String(desktopTocHtml || '').trim())
   .article-layout(class=hasToc ? 'article-layout--with-toc' : 'article-layout--plain')
     article.article
       header.article__header
@@ -47,13 +50,17 @@ block content
         p.post-outline__title 章节概览
         nav.post-toc(data-post-toc)
           != desktopTocHtml
-  if page.prev || page.next
+  - var previousPost = page.prev
+  - while (previousPost && hsad_is_hidden(previousPost)) previousPost = previousPost.prev
+  - var nextPost = page.next
+  - while (nextPost && hsad_is_hidden(nextPost)) nextPost = nextPost.next
+  if previousPost || nextPost
     nav.post-nav
-      if page.prev
-        a.post-nav__item.post-nav__item--prev(href=url_for(page.prev.path))
+      if previousPost
+        a.post-nav__item.post-nav__item--prev(href=url_for(previousPost.path))
           span.post-nav__label 上一篇
-          strong= page.prev.title
-      if page.next
-        a.post-nav__item.post-nav__item--next(href=url_for(page.next.path))
+          strong= previousPost.title
+      if nextPost
+        a.post-nav__item.post-nav__item--next(href=url_for(nextPost.path))
           span.post-nav__label 下一篇
-          strong= page.next.title
+          strong= nextPost.title
