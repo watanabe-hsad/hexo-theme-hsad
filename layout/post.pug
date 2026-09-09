@@ -46,8 +46,7 @@ block content
         != page.content
     if hasToc
       aside.post-outline.post-outline--desktop(aria-label='文章目录')
-        p.post-outline__eyebrow 本文导航
-        p.post-outline__title 章节概览
+        p.post-outline__title 本文导航
         nav.post-toc(data-post-toc)
           != desktopTocHtml
   - var previousPost = page.prev

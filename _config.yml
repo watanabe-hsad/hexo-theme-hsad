@@ -19,8 +19,6 @@ menu:
     path: /categories/
   - name: 标签
     path: /tags/
-  - name: 搜索
-    path: /search/
   - name: 友链
     path: /links/
   - name: 关于

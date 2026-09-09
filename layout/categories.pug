@@ -4,7 +4,6 @@ block content
   - var categories = site.categories ? (typeof site.categories.toArray === 'function' ? site.categories.toArray() : (site.categories.data || [])) : []
   - var categoryRows = categories.map(function(category) { return { category: category, count: hsad_visible_count(category), trail: hsad_category_trail(category, categories) }; }).filter(function(row) { return row.count; }).sort(function(a, b) { return b.count - a.count || a.trail.localeCompare(b.trail, 'zh-CN'); })
   section.page-intro
-    p.page-intro__kicker Overview
     h1.page-intro__title 分类
     p.page-intro__description= categoryRows.length ? `${categoryRows.length} 个分类，把写过的东西分开摆放。` : '暂时还没有分类。'
   if categoryRows.length

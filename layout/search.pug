@@ -3,7 +3,6 @@ extends ./_partial/base.pug
 block content
   - var searchIndexPath = (config.search && config.search.path) || '/search.xml'
   section.page-intro
-    p.page-intro__kicker Search
     h1.page-intro__title 搜索
     p.page-intro__description 在标题和正文里找一段记忆。索引只会在开始搜索时读取。
   section.search-panel(data-search data-search-index=url_for(searchIndexPath))
