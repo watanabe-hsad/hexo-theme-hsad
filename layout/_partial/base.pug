@@ -18,6 +18,8 @@ html(lang=config.language || 'zh-CN')
     meta(name='author' content=config.author || siteTitle)
     != meta_generator()
     title= currentTitle
+    link(rel='icon' href=url_for('/favicon.ico'))
+    link(rel='stylesheet' href=hsad_theme_asset('/css/hsad-theme.css'))
     if accentColor || accentSoft
       style.
         :root {
@@ -25,7 +27,13 @@ html(lang=config.language || 'zh-CN')
           #{accentStrong ? `--accent-strong: ${accentStrong};` : ''}
           #{accentSoft ? `--accent-soft: ${accentSoft};` : ''}
         }
-    link(rel='stylesheet' href=hsad_theme_asset('/css/hsad-theme.css'))
+        @media (prefers-color-scheme: dark) {
+          :root {
+            #{accentColor ? `--accent: color-mix(in srgb, ${accentColor} 68%, #f3f6f8);` : ''}
+            #{accentColor ? `--accent-strong: color-mix(in srgb, ${accentColor} 22%, #f6f3ee);` : ''}
+            #{accentSoft ? `--accent-soft: color-mix(in srgb, ${accentColor || accentSoft} 30%, #1c242c);` : ''}
+          }
+        }
     script(src=hsad_theme_asset('/js/hsad-theme.js') defer)
   body(class=[is_home() ? 'view-home' : 'view-inner', is_post() ? 'view-post' : 'view-page'].join(' '))
     if is_post()
